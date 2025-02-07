@@ -1,6 +1,3 @@
-> [!WARNING]
-> This code is subject to change!
+# PracticeBob
 
-# SpongeBob
-
-"Coming soon..."
+> [!NOTE] This is a dummy robot!
