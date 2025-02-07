@@ -10,9 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 public class SpongeBob extends TimedRobot {
-    private Command autonomousCommand;
-    
-    private RobotContainer robotContainer;
+    Command autonomousCommand;
+    RobotContainer robotContainer;
 
     @Override
     public void robotInit() {
@@ -25,15 +24,6 @@ public class SpongeBob extends TimedRobot {
     }
 
     @Override
-    public void disabledInit() {}
-    
-    @Override
-    public void disabledPeriodic() {}
-    
-    @Override
-    public void disabledExit() {}
-
-    @Override
     public void autonomousInit() {
         autonomousCommand = robotContainer.getAutonomousCommand();
         
@@ -43,32 +33,9 @@ public class SpongeBob extends TimedRobot {
     }
 
     @Override
-    public void autonomousPeriodic() {}
-
-    @Override
-    public void autonomousExit() {}
-
-    @Override
     public void teleopInit() {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
     }
-
-    @Override
-    public void teleopPeriodic() {}
-
-    @Override
-    public void teleopExit() {}
-
-    @Override
-    public void testInit() {
-        CommandScheduler.getInstance().cancelAll();
-    }
-
-    @Override
-    public void testPeriodic() {}
-
-    @Override
-    public void testExit() {}
 }
