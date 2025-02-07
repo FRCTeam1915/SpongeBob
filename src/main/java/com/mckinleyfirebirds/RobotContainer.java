@@ -5,18 +5,26 @@
 
 package com.mckinleyfirebirds;
 
-import edu.wpi.first.wpilibj.XboxController;
+import com.mckinleyfirebirds.commands.Elevator;
+import com.revrobotics.spark.SparkLowLevel;
+import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
-    XboxController controller = new XboxController(0);
+    CommandXboxController controller = new CommandXboxController(0);
+
+    SparkMax motor1 = new SparkMax(21, SparkLowLevel.MotorType.kBrushless);
+    SparkMax motor2 = new SparkMax(22, SparkLowLevel.MotorType.kBrushless);
 
     public RobotContainer() {
         configureBindings();
     }
 
     private void configureBindings() {
+        controller.leftTrigger().whileTrue(new Elevator(motor1, motor2, true));
+        controller.rightTrigger().whileTrue(new Elevator(motor1, motor2, false));
     }
 
     public Command getAutonomousCommand() {
