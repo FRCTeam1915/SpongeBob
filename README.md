@@ -1,3 +1,4 @@
 # PracticeBob
 
-> [!NOTE] This is a dummy robot!
+> [!NOTE]
+> This is a dummy robot!
