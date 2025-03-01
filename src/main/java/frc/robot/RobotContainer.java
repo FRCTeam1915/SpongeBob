@@ -27,15 +27,15 @@ import swervelib.SwerveInputStream;
  * little robot logic should actually be handled in the {@link Robot} periodic methods (other than the scheduler calls).
  * Instead, the structure of the robot (including subsystems, commands, and trigger mappings) should be declared here.
  */
-public class RobotContainer
-{
+public class RobotContainer {
 
 
   SparkMax motor1 = new SparkMax(21, SparkLowLevel.MotorType.kBrushless);
   SparkMax motor2 = new SparkMax(22, SparkLowLevel.MotorType.kBrushless);
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  final         CommandXboxController driverXbox = new CommandXboxController(0);
+  static final         CommandXboxController driverXbox = new CommandXboxController(0);
+//  final CommandXboxController operatorXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
                                                                                 "swerve/"));
@@ -109,10 +109,10 @@ public class RobotContainer
    */
   private void configureBindings()
   {
+    driverXbox.leftTrigger().onTrue(new Elevator(motor1, motor2, driverXbox, true));
+    driverXbox.rightTrigger().onTrue(new Elevator(motor1, motor2, driverXbox, false));
 
 
-    driverXbox.leftTrigger().whileTrue(new Elevator(motor1, motor2, driverXbox, true));
-    driverXbox.rightTrigger().whileTrue(new Elevator(motor1, motor2, driverXbox, false));
 
     Command driveFieldOrientedDirectAngle      = drivebase.driveFieldOriented(driveDirectAngle);
     Command driveFieldOrientedAnglularVelocity = drivebase.driveFieldOriented(driveAngularVelocity);

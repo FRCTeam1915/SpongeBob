@@ -4,7 +4,13 @@
 
 package frc.robot;
 
+import au.grapplerobotics.CanBridge;
+import au.grapplerobotics.ConfigurationFailedException;
+import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -23,9 +29,11 @@ public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer;
 
   private Timer disabledTimer;
+  LaserCan laserCan;
 
   public Robot()
   {
+    CanBridge.runTCP();
     instance = this;
   }
 
@@ -47,10 +55,22 @@ public class Robot extends TimedRobot {
     // immediately when disabled, but then also let it be pushed more 
     disabledTimer = new Timer();
 
+    laserCan = new LaserCan(25);
+
+    try {
+        laserCan.setRangingMode(LaserCanInterface.RangingMode.SHORT);
+        laserCan.setRegionOfInterest(new LaserCanInterface.RegionOfInterest(4, 4, 8, 8));
+        laserCan.setTimingBudget(LaserCanInterface.TimingBudget.TIMING_BUDGET_100MS);
+    } catch (ConfigurationFailedException e) {
+
+    }
+
     if (isSimulation())
     {
       DriverStation.silenceJoystickConnectionWarning(true);
     }
+
+
   }
 
   /**
@@ -68,6 +88,13 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+
+    if (NetworkTableInstance.getDefault().getTable("limelight").getEntry("tv").getInteger(0) == 1) RobotContainer.driverXbox.setRumble(GenericHID.RumbleType.kBothRumble, 1); else RobotContainer.driverXbox.setRumble(GenericHID.RumbleType.kBothRumble, 0);
+
+    LaserCanInterface.Measurement measurement = laserCan.getMeasurement();
+    if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
+      Utilities.distance = measurement.distance_mm;
+    }
   }
 
   /**
