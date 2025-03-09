@@ -9,12 +9,13 @@ import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.GenericHID;
-import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Elevator;
+import jdk.jshell.execution.Util;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to each mode, as
@@ -30,6 +31,7 @@ public class Robot extends TimedRobot {
 
   private Timer disabledTimer;
   LaserCan laserCan;
+  DutyCycleEncoder encoder;
 
   public Robot()
   {
@@ -56,6 +58,7 @@ public class Robot extends TimedRobot {
     disabledTimer = new Timer();
 
     laserCan = new LaserCan(25);
+    encoder = new DutyCycleEncoder(0);
 
     try {
         laserCan.setRangingMode(LaserCanInterface.RangingMode.SHORT);
@@ -95,6 +98,9 @@ public class Robot extends TimedRobot {
     if (measurement != null && measurement.status == LaserCan.LASERCAN_STATUS_VALID_MEASUREMENT) {
       Utilities.distance = measurement.distance_mm;
     }
+    Utilities.angle = encoder.get() * 10000000;
+    SmartDashboard.putNumber("Angle", Utilities.angle);
+//    System.out.println(Utilities.distance);
   }
 
   /**
@@ -132,6 +138,7 @@ public class Robot extends TimedRobot {
     {
       m_autonomousCommand.schedule();
     }
+
   }
 
   /**

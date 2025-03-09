@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.spark.SparkFlex;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -12,15 +14,17 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.OperatorConstants;
-import frc.robot.commands.Elevator;
+import frc.robot.commands.*;
 import frc.robot.subsystems.swervedrive.SwerveSubsystem;
 import java.io.File;
 import swervelib.SwerveInputStream;
+import com.pathplanner.lib.auto.NamedCommands;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a "declarative" paradigm, very
@@ -31,10 +35,14 @@ public class RobotContainer {
 
 
   SparkMax motor1 = new SparkMax(21, SparkLowLevel.MotorType.kBrushless);
-  SparkMax motor2 = new SparkMax(22, SparkLowLevel.MotorType.kBrushless);
+  SparkMax motor2 = new SparkMax(60, SparkLowLevel.MotorType.kBrushless);
+  TalonSRX talon1 = new TalonSRX(51);
+  SparkFlex intakeMotor = new SparkFlex(33, SparkLowLevel.MotorType.kBrushless);
+
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   static final         CommandXboxController driverXbox = new CommandXboxController(0);
+  static final         CommandXboxController intakeXbox = new CommandXboxController(1);
 //  final CommandXboxController operatorXbox = new CommandXboxController(0);
   // The robot's subsystems and commands are defined here...
   private final SwerveSubsystem       drivebase  = new SwerveSubsystem(new File(Filesystem.getDeployDirectory(),
@@ -89,7 +97,7 @@ public class RobotContainer {
                                                                                                               (Math.PI *
                                                                                                                2))
                                                                                .headingWhile(true);
-
+  SendableChooser<String> autoMode = new SendableChooser<>();
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -97,7 +105,14 @@ public class RobotContainer {
   {
     // Configure the trigger bindings
     configureBindings();
+
+//    NamedCommands.registerCommand("highElevator",new Elevator(motor1,motor2,intakeXbox));
+//    NamedCommands.registerCommand("middleElevator",new Elevator(motor1,motor2,intakeXbox,2));
+//    NamedCommands.registerCommand("lowElevator",new Elevator(motor1,motor2,intakeXbox,1));
+//    NamedCommands.registerCommand("bottomElevator",new Elevator(motor1,motor2,intakeXbox,0));
+//    NamedCommands.registerCommand("dropCoral", new Intake(intakeMotor,0.5));
     DriverStation.silenceJoystickConnectionWarning(true);
+
   }
 
   /**
@@ -109,8 +124,17 @@ public class RobotContainer {
    */
   private void configureBindings()
   {
-    driverXbox.leftTrigger().onTrue(new Elevator(motor1, motor2, driverXbox, true));
-    driverXbox.rightTrigger().onTrue(new Elevator(motor1, motor2, driverXbox, false));
+    intakeXbox.leftTrigger().whileTrue(new Elevator(motor1, motor2, intakeXbox, true));
+    intakeXbox.rightTrigger().whileTrue(new Elevator(motor1, motor2, intakeXbox, false));
+
+
+//    intakeXbox.b().toggleOnTrue(new Elevator2(motor1, motor2, intakeXbox));
+//    intakeXbox.a().toggleOnTrue(new Elevator3(motor1, motor2, intakeXbox));
+    intakeXbox.a().whileTrue(new Intake(intakeMotor,0.2));
+    intakeXbox.b().whileTrue(new Intake(intakeMotor,-0.2));
+    intakeXbox.leftBumper().whileTrue(new Articulation(talon1, intakeXbox, true));
+    intakeXbox.rightBumper().whileTrue(new Articulation(talon1, intakeXbox, false));
+
 
 
 
