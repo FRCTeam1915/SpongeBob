@@ -5,26 +5,30 @@
 
 package com.mckinleyfirebirds;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.mckinleyfirebirds.commands.Articulate;
 import com.mckinleyfirebirds.commands.Elevator;
-import com.revrobotics.spark.SparkLowLevel;
-import com.revrobotics.spark.SparkMax;
+import com.mckinleyfirebirds.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
-    CommandXboxController controller = new CommandXboxController(0);
 
-    SparkMax motor1 = new SparkMax(21, SparkLowLevel.MotorType.kBrushless);
-    SparkMax motor2 = new SparkMax(22, SparkLowLevel.MotorType.kBrushless);
+    ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
+    TalonSRX talon = new TalonSRX(51);
 
     public RobotContainer() {
         configureBindings();
     }
 
     private void configureBindings() {
-        controller.leftTrigger().whileTrue(new Elevator(motor1, motor2, true));
-        controller.rightTrigger().whileTrue(new Elevator(motor1, motor2, false));
+        SpongeBob.getInstance().controller.a().onChange(new Elevator(elevatorSubsystem, 0.253));
+        SpongeBob.getInstance().controller.b().onChange(new Elevator(elevatorSubsystem, 0.355));
+        SpongeBob.getInstance().controller.x().onChange(new Elevator(elevatorSubsystem, 0.465));
+        SpongeBob.getInstance().controller.y().onChange(new Elevator(elevatorSubsystem, 0.65));
+
+        SpongeBob.getInstance().controller.leftBumper().whileTrue(new Articulate(talon, false));
+        SpongeBob.getInstance().controller.rightBumper().whileTrue(new Articulate(talon, true));
     }
 
     public Command getAutonomousCommand() {

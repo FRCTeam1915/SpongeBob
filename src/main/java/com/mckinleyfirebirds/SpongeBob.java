@@ -8,10 +8,19 @@ package com.mckinleyfirebirds;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class SpongeBob extends TimedRobot {
     Command autonomousCommand;
     RobotContainer robotContainer;
+
+    CommandXboxController controller = new CommandXboxController(0);
+
+    public static SpongeBob instance;
+
+    public SpongeBob() {
+        instance = this;
+    }
 
     @Override
     public void robotInit() {
@@ -37,5 +46,9 @@ public class SpongeBob extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+    }
+
+    public static SpongeBob getInstance() {
+        return instance;
     }
 }

@@ -1,27 +1,34 @@
 package com.mckinleyfirebirds.commands;
 
-import com.revrobotics.spark.SparkMax;
+import com.mckinleyfirebirds.subsystems.ElevatorSubsystem;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class Elevator extends Command {
-    SparkMax motor1;
-    SparkMax motor2;
-    boolean direction;
+    ElevatorSubsystem elevatorSubsystem;
+    PIDController pidController;
+    double level;
 
-    public Elevator(SparkMax motor1, SparkMax motor2, boolean direction) {
-        this.motor1 = motor1;
-        this.motor2 = motor2;
-        this.direction = direction;
+    public Elevator(ElevatorSubsystem elevatorSubsystem, double level) {
+        this.elevatorSubsystem = elevatorSubsystem;
+        pidController = new PIDController(3.0, 0.0, 0.05);
+        this.level = level;
+
+        addRequirements(elevatorSubsystem);
     }
+
     @Override
     public void execute() {
-        motor1.set(direction ? 0.3 : -0.3);
-        motor2.set(direction ? -0.3 : 0.3);
+        double currentDistance = elevatorSubsystem.getMeasurement();
+        double pidOutput = pidController.calculate(currentDistance, level);
+
+        if (pidOutput > 1.0) pidOutput = 1.0; // Safety
+
+        elevatorSubsystem.setSpeed(pidOutput);
     }
 
     @Override
     public void end(boolean interrupted) {
-        motor1.stopMotor();
-        motor2.stopMotor();
+        elevatorSubsystem.endMotors();
     }
 }
