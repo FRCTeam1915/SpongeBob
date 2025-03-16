@@ -24,7 +24,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             laser.setTimingBudget(LaserCanInterface.TimingBudget.TIMING_BUDGET_20MS);
             laser.setRegionOfInterest(new LaserCanInterface.RegionOfInterest(2, 2, 8, 0));
         } catch (ConfigurationFailedException e) {
-            // We don't really care about this
+            System.err.println("HOW DID THE LASER FAIL!!! CHECK `ElevatorSystem` CLASS! THIS IS FETAL!");
         }
     }
     // Speed in percentage
@@ -42,6 +42,6 @@ public class ElevatorSubsystem extends SubsystemBase {
         LaserCanInterface.Measurement measurement = laser.getMeasurement();
         // TODO: Check if we have invalid measurement
         SmartDashboard.putNumber("Elevator measurement", (double) measurement.distance_mm / 1000);
-            return (double) measurement.distance_mm / 1000;
+        return (double) measurement.distance_mm / 1000;
     }
 }
