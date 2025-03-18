@@ -3,8 +3,10 @@ package com.mckinleyfirebirds.subsystems;
 import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import au.grapplerobotics.interfaces.LaserCanInterface;
+import com.mckinleyfirebirds.commands.ElevatorLevel;
 import com.revrobotics.spark.SparkLowLevel;
 import com.revrobotics.spark.SparkMax;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -12,6 +14,8 @@ public class ElevatorSubsystem extends SubsystemBase {
     SparkMax motor1;
     SparkMax motor2;
     LaserCan laser;
+
+    ElevatorLevel currentLevel = ElevatorLevel.LEVEL_ONE; // Default to level one
 
     public ElevatorSubsystem()  {
         motor1 = new SparkMax(60, SparkLowLevel.MotorType.kBrushless);
@@ -27,6 +31,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             System.err.println("HOW DID THE LASER FAIL!!! CHECK `ElevatorSystem` CLASS! THIS IS FETAL!");
         }
     }
+
     // Speed in percentage
     public void setSpeed(double speed) {
         motor1.set(speed);
@@ -43,5 +48,14 @@ public class ElevatorSubsystem extends SubsystemBase {
         // TODO: Check if we have invalid measurement
         SmartDashboard.putNumber("Elevator measurement", (double) measurement.distance_mm / 1000);
         return (double) measurement.distance_mm / 1000;
+    }
+
+    public ElevatorLevel getCurrentLevel() {
+        return this.currentLevel;
+    }
+
+    public void setLevel(ElevatorLevel level) {
+        SmartDashboard.putString("Current Elevator Level", level.toString());
+        this.currentLevel = level;
     }
 }

@@ -7,13 +7,12 @@ package com.mckinleyfirebirds;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.mckinleyfirebirds.commands.Articulate;
-import com.mckinleyfirebirds.commands.Elevator;
+import com.mckinleyfirebirds.commands.SetElevatorHeight;
 import com.mckinleyfirebirds.subsystems.ElevatorSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class RobotContainer {
-
     ElevatorSubsystem elevatorSubsystem = new ElevatorSubsystem();
     TalonSRX talon = new TalonSRX(51);
 
@@ -22,10 +21,14 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        SpongeBob.getInstance().controller.a().onChange(new Elevator(elevatorSubsystem, 0.253));
-        SpongeBob.getInstance().controller.b().onChange(new Elevator(elevatorSubsystem, 0.355));
-        SpongeBob.getInstance().controller.x().onChange(new Elevator(elevatorSubsystem, 0.465));
-        SpongeBob.getInstance().controller.y().onChange(new Elevator(elevatorSubsystem, 0.65));
+//        SpongeBob.getInstance().controller.rightBumper().onTrue(new ElevatorUp(elevatorSubsystem));
+//        SpongeBob.getInstance().controller.leftBumper().onTrue(new ElevatorDown(elevatorSubsystem));
+
+        SpongeBob.getInstance().controller.a().onTrue(new SetElevatorHeight(elevatorSubsystem, 0.055));
+        SpongeBob.getInstance().controller.b().onTrue(new SetElevatorHeight(elevatorSubsystem, 0.380));
+        SpongeBob.getInstance().controller.x().onTrue(new SetElevatorHeight(elevatorSubsystem, 0.480));
+        SpongeBob.getInstance().controller.y().onTrue(new SetElevatorHeight(elevatorSubsystem, 0.665));
+
 
         SpongeBob.getInstance().controller.leftBumper().whileTrue(new Articulate(talon, false));
         SpongeBob.getInstance().controller.rightBumper().whileTrue(new Articulate(talon, true));

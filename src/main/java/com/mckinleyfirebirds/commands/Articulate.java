@@ -19,6 +19,11 @@ public class Articulate extends Command {
     }
 
     @Override
+    public void execute() {
+//        System.out.println(talon.getSensorCollection().());
+    }
+
+    @Override
     public void end(boolean interrupted) {
         talon.set(ControlMode.PercentOutput, 0);
     }
