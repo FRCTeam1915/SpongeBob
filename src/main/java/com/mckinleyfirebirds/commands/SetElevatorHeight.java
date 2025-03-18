@@ -7,20 +7,19 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class Elevator extends Command {
     ElevatorSubsystem elevatorSubsystem;
     PIDController pidController;
-    double level;
+    double height;
 
-    public Elevator(ElevatorSubsystem elevatorSubsystem, double level) {
+    public Elevator(ElevatorSubsystem elevatorSubsystem, double height) {
         this.elevatorSubsystem = elevatorSubsystem;
         pidController = new PIDController(3.0, 0.0, 0.05);
-        this.level = level;
+        this.height = height;
 
         addRequirements(elevatorSubsystem);
     }
 
     @Override
     public void execute() {
-        double currentDistance = elevatorSubsystem.getMeasurement();
-        double pidOutput = pidController.calculate(currentDistance, level);
+        double pidOutput = pidController.calculate(elevatorSubsystem.getMeasurement(), height);
 
         if (pidOutput > 1.0) pidOutput = 1.0; // Safety
 
