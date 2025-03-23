@@ -993,6 +993,22 @@ public class SwerveDrive
     resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
   }
 
+  public void zero180() {
+    // Resets the real gyro or the angle accumulator, depending on whether the robot is being
+    // simulated
+    if (SwerveDriveTelemetry.isSimulation)
+    {
+      simIMU.setAngle(0);
+    } else
+    {
+      setGyroOffset(imu.getRawRotation3d());
+    }
+    imuReadingCache.update();
+    swerveController.lastAngleScalar = 0;
+    lastHeadingRadians = 0;
+    resetOdometry(new Pose2d(getPose().getTranslation(), new Rotation2d()));
+  }
+
   /**
    * Gets the current yaw angle of the robot, as reported by the imu. CCW positive, not wrapped.
    *

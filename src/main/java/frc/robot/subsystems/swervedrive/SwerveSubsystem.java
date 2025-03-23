@@ -20,10 +20,7 @@ import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -141,11 +138,11 @@ public class SwerveSubsystem extends SubsystemBase
   public void periodic()
   {
     // When vision is enabled we must manually update odometry in SwerveDrive
-    if (visionDriveTest)
-    {
-      swerveDrive.updateOdometry();
-      vision.updatePoseEstimation(swerveDrive);
-    }
+//    if (visionDriveTest)
+//    {
+//      swerveDrive.updateOdometry();
+//      vision.updatePoseEstimation(swerveDrive);
+//    }
   }
 
   @Override
@@ -278,7 +275,7 @@ public class SwerveSubsystem extends SubsystemBase
         pose,
         constraints,
         edu.wpi.first.units.Units.MetersPerSecond.of(0) // Goal end velocity in meters/sec
-                                     );
+    );
   }
 
   /**
@@ -637,6 +634,16 @@ public class SwerveSubsystem extends SubsystemBase
                                                         Constants.MAX_SPEED);
   }
 
+  public ChassisSpeeds getTargetTraceSpeeds(double xInput, double yInput, Rotation2d angle) {
+    Translation2d scaledInputs = SwerveMath.cubeTranslation(new Translation2d(xInput, yInput));
+
+    return swerveDrive.swerveController.getTargetSpeeds(scaledInputs.getX(),
+            scaledInputs.getY(),
+            angle.getRadians(),
+            0,
+            Constants.TRACE_SPEED);
+  }
+
   /**
    * Get the chassis speeds based on controller input of 1 joystick and one angle. Control the robot at an offset of
    * 90deg.
@@ -731,5 +738,9 @@ public class SwerveSubsystem extends SubsystemBase
   public SwerveDrive getSwerveDrive()
   {
     return swerveDrive;
+  }
+
+  public void resetOdometry() {
+      swerveDrive.resetOdometry(new Pose2d(new Translation2d(), new Rotation2d()));
   }
 }
