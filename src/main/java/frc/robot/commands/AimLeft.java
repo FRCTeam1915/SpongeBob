@@ -22,6 +22,9 @@ public class AimLeft extends Command {
 
 //            swerve.drive();
 
+            swerve.drive(new Translation2d(getTranslationX() > 0.15 ? -2 : 2, 1), getYaw() - , false);
+
+
 //            swerve.driveToDistanceCommand()
 
 //            swerve.drive(new Translation2d(getTranslationX() > 0.15 ? -1 : 1, 0), getYaw(), false);
@@ -39,7 +42,7 @@ public class AimLeft extends Command {
     }
 
     public double getYaw() {
-        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("targetpose_cameraspace").getDoubleArray(new double[6])[4];
+        return NetworkTableInstance.getDefault().getTable("limelight").getEntry("camerapose_targetspace").getDoubleArray(new double[6])[4];
     }
 
     public double getTranslationY() {
